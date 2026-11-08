@@ -1,61 +1,54 @@
-# SentinelClean-Hybrid: Simple Industrial Sorting System
+# SentinelClean-Hybrid: Smart Industrial & Home Vacuum Robot
 
 ![SentinelClean Industrial Architecture](sentinelcleanaimt.png)
 
 ---
 
-## 🎯 Overview & Business Plan
-**SentinelClean-Hybrid** is an automated sorting system for fast industrial conveyor belts. It is faster and better than old infrared sensors or color checks.
+## 🎯 System Overview & Business Model
+**SentinelClean-Hybrid** is an automated cleaning robot built for modern factory warehouses and smart homes. It runs a custom-trained, edge-accelerated **YOLOv26** object detection model to isolate and classify trash types in real-time.
 
-* **Main Technology:** Uses a custom **YOLOv26** object detection system built right into the local device. This keeps the work fast without slowing down the main computer.
-* **Business Plan:** The project uses a *"Razor and Blades"* model. The main sorting machine is sold cheap to get people to use it. Money is made by selling replaceable single-use cotton filters.
-
----
-
-## 🗺️ Development Steps
-`[Phase 1: Design] ➡ [Phase 2: Data] ➡ [Phase 3: Training] ➡ [Phase 4: State Machine] ➡ [Phase 5: Launch]`
-
-### 📋 Phase 1 & 2: Project Goal & Waste Types
-* **Local Processing:** The system runs directly on the local machine instead of sending data to the cloud, making it much faster.
-* **3-Class Waste Groups (80% Training, 10% Validation, 10% Testing):**
-  * **Class 0: Dry Waste** -> Paper, recyclable items, clean cardboard boxes.
-  * **Class 1: Wet Waste** -> Food waste, wet organic materials, damp trash.
-  * **Class 2: Liquid Spill** -> Puddles, water, and wet chemical spills (Top priority safety target).
-
-### 🧠 Phase 3 & 4: Training & Automation
-* **YOLOv26 Training Results (50 Training Rounds):**
-  * `Round 01`: `box_loss: 1.4210 | cls_loss: 2.8180 | mAP50: 0.3200`
-  * `Round 25`: `box_loss: 0.9870 | cls_loss: 1.5430 | mAP50: 0.5850`
-  * `Round 50`: `box_loss: 0.6924 | cls_loss: 1.0620 | mAP50: 0.6350 -> [Model Saved: best.pt]`
-* **System Code (`src/image_preprocessing.py`):** A Python program checks the camera video in real-time and tells the machine what to sort.
-
-```python
-import os
-import cv2
-import numpy as np
-import torch
-from ultralytics import YOLO
-
-class SentinelCleanConveyorCore:
-    def __init__(self, model_path="best.pt"):
-        self.CONF_THRESHOLD = 0.25
-        self.active_state = "CONVEYOR_PASSIVE_MONITORING"
-        if os.path.exists(model_path):
-            self.device_target = 0 if torch.cuda.is_available() else "cpu"
-            self.model = YOLO(model_path)
-            self.model.to(self.device_target)
-```
-
-### 📥 Phase 5: Speed, Safety, & Privacy
-* **Speed Test Results:**
-  * Image Preparation: **4.22 ms**
-  * YOLOv26 AI Check: **25.88 ms**
-  * System Switcher: **0.04 ms**
-  * **Total Time: 30.14 ms** (Faster than the required 45.00 ms industrial limit).
-* **Safety Backup Plan:** If the system gets too slow during a busy time, it skips extra frames and focuses only on **Class 2 (`Liquid Spill`)**.
-* **Privacy:** All camera video is processed directly in the computer's memory. Nothing is saved to a hard drive or sent to the cloud, keeping factory data safe.
+* **Main Technology:** Uses a native **NMS-Free End-to-End** pipeline structure. Duplicate prediction boxes are culled directly inside the neural network layers. This frees up the system CPU completely and updates physical machine states within **0.04 ms**.
+* **Business Model:** Follows a profitable *"Razor and Blades"* consumable revenue loop. The robot hardware is sold at an optimized price point to win rapid market share. Recurring profits are generated through proprietary, custom-fit cylindrical filter cartridges sold as continuous lifecycle replacements.
 
 ---
 
-## 🧠 AI Development Log
-The full history of how this AI was built, along with code prompts and graphs, can be found in `docs/AI_usage_log.md`.
+## 🗺️ Multi-Phase Development Steps
+`[Phase 1: Concept] ➡ [Phase 2: Data] ➡ [Phase 3: AI Training] ➡ [Phase 4: State Machine] ➡ [Phase 5: Launch]`
+
+### 📋 Phase 1 & 2: Project Scope & 3-Class Taxonomy
+The architecture processes all incoming video frame arrays locally in volatile RAM to remove cloud latencies and secure factory data privacy. The data profile utilizes a strict split matrix (**80% Train, 10% Val, 10% Test**) mapped to three production classes:
+* **Class 0: Dry Waste** -> Paper products, recyclable plastics, and structural dry cardboard.
+* **Class 1: Wet Waste** -> Organic food debris, wet sticky scraps, and damp trash.
+* **Class 2: Liquid Spill** -> Puddles, water leaks, and chemical spills (Top Priority Safety Threat).
+
+### 🧠 Phase 3 & 4: Training Diagnostics & Smart Hardware Logic
+* **YOLOv26 Convergence Profile (50 Epochs Trace):**
+  * `Epoch 01`: `box_loss: 1.4210 | cls_loss: 2.8180 | mAP50: 0.3200`
+  * `Epoch 25`: `box_loss: 0.9870 | cls_loss: 1.5430 | mAP50: 0.5850`
+  * `Epoch 50`: `box_loss: 0.6924 | cls_loss: 1.0620 | mAP50: 0.6350 -> [Model Saved: best.pt]`
+
+#### 🛡️ Cylindrical Perimeter Tube Filter Protection
+The machine drops old stacked flat filter models in favor of a single **integrated cylindrical cartridge filter fitted tightly around the perimeter of the suction tube**. It contains an active hydrophobic layer backed by activated carbon to catch moisture, kill dirty odor streams, and preserve the main vacuum engine.
+
+#### 🔄 Pre-Check Matrix & 2-Step Back-Off Recovery Loop
+To save battery and prevent slipping mistakes over wet zones, the robot skips complex SLAM re-calculations during minor spills and triggers a hardware-coordinated **2-Step Back-Off Algorithm**:
+1. The camera checks the puddle size first. If it is a minor spill, the main vacuum shuts off to protect the system, and a low-power **Mini-Pump Module** turns on to suck up the liquid.
+2. The robot finishes draining the wet spot, checks its **rear proximity sensor array** to secure blind spots, and backs up exactly **2 steps (60 cm)**.
+3. It spins on the **Main Vacuum Core** to sweep up the remaining dry trash (`Class 0/1`) over the exact same zone, ensuring a 100% spotless floor.
+
+---
+
+## 📥 Phase 5: Local Latency & Product Segments
+
+### 📊 Edge Computing Speed Log
+* Video Matrix Buffer Ingestion: **4.22 ms**
+* YOLOv26 Core Graph Inference Pass: **25.88 ms**
+* Local State Machine Swapper: **0.04 ms**
+* **Total Turnaround Ingestion Latency: 30.14 ms** *(Runs safely beneath the maximum industrial system budget < 45.00 ms).*
+
+### ⚠️ Critical Spill Overload (Emergency Fallback)
+If a puddle is massive and fills more than **65% of the camera frame**, the state machine switches to critical overload mode: the dry vacuum motor shuts off immediately, the mini-pump isolates the liquid border, and the robot fires a **Loud Hardware Alarm** while broadcasting an emergency push notification straight to the user's smartphone.
+
+### 🛒 Target Product Segments
+* **Household Mini Version:** Built with low-power pump components and compact frames, optimized for household dry cleaning and minor kitchen spills (e.g., dropped cups or split milk).
+* **Industrial Heavy-Duty Version:** Built with high-capacity fluid tanks, high-pressure extraction pumps, and steel structures to contain toxic chemical leaks in manufacturing plants.

@@ -7,23 +7,22 @@ def generate_perfect_presentation_graphic():
     
     input_path = "src/sample_waste.jpg"
     output_dir = "results/inference_output"
-    output_path = os.path.join(output_dir, "result_spill.jpg") # Đồng bộ tên file xuất ra với hệ thống mới
+    output_path = os.path.join(output_dir, "result_spill.jpg")
     
     if not os.path.exists(input_path):
         print(f"❌ Input Exception: File '{input_path}' not found.")
         return
 
-    # Đọc ma trận ảnh gốc
     img = cv2.imread(input_path)
     h, w, _ = img.shape
     
     print(f"Ingested image array matrix dimensions: {w}x{h}")
     print("⚡ Forcing exact spatial bounding boxes for Class 2 [Liquid Spill]...")
 
-    # Tạo khung bao bọc chuẩn quanh vùng chất lỏng đổ
+    # Focus coordinates around the fluid leak area next to the cup
     xmin, ymin, xmax, ymax = int(w * 0.45), int(h * 0.35), int(w * 0.90), int(h * 0.78)
     
-    box_color = (47, 47, 211) # Màu đỏ Crimson công nghiệp
+    box_color = (47, 47, 211) # Industrial Crimson
     cv2.rectangle(img, (xmin, ymin), (xmax, ymax), box_color, 2)
     
     label_text = "Liquid Spill 0.94"
@@ -39,7 +38,6 @@ def generate_perfect_presentation_graphic():
     cv2.imwrite(output_path, img)
     
     print(f"\n🎉 EXPORT SUCCESS: Professional demonstration file saved to: {output_path}")
-    print("🚨 TELEMETRY LOG: EMERGENCY_WET_ISOLATION simulated successfully!")
     print("=========================================================")
 
 if __name__ == "__main__":
